@@ -43,16 +43,24 @@ Before you can start the exercises, you will need to:
     ```powershell
     # Check Azure CLI version (requires 2.50+)
     az version
+    ```
 
+    ```powershell
     # Check Docker is running
     docker --version
+    ```
 
+    ```powershell
     # Login to Azure
     az login
+    ```
 
+    ```powershell
     # Set your subscription (replace with your subscription ID or name)
     az account set --subscription "<YOUR_SUBSCRIPTION_ID>"
+    ```
 
+    ```powershell
     # Verify current subscription
     az account show --query "{Name:name, SubscriptionId:id}" -o table
 
@@ -63,7 +71,9 @@ Before you can start the exercises, you will need to:
     ```powershell
     # Clone the repository
     git clone https://github.com/petender/azd-contapp-demo-v2.git
+    ```
 
+    ```powershell
     # Navigate to the project directory
     cd c:\azd-contapp-demo-v2
 
@@ -74,13 +84,19 @@ Before you can start the exercises, you will need to:
     ```powershell
     # Set your environment name (use lowercase, no special characters)
     $ENV_NAME = "contapp"  # Example: "john-lab"
+    ```
 
+    ```powershell
     # Set the Azure region
     $LOCATION = "eastus2" # Choose your Azure region
+    ```
 
+    ```powershell
     # Get your user principal ID (for Key Vault access)
     $PRINCIPAL_ID = (az ad signed-in-user show --query id -o tsv)
+    ```
 
+    ```powershell
     # Verify the principal ID was retrieved
     Write-Host "Principal ID: $PRINCIPAL_ID"
 
@@ -160,7 +176,9 @@ Use this option if you want to understand the Bicep templates and deploy infrast
     $OUTPUTS = az deployment sub show `
         --name "contoso-$ENV_NAME" `
         --query "properties.outputs" -o json | ConvertFrom-Json
+    ```
 
+    ```powershell
     # Extract key values
     $RG = $OUTPUTS.AZURE_RESOURCE_GROUP.value
     $ACR = $OUTPUTS.CONTAINER_REGISTRY_LOGIN_SERVER.value
@@ -189,10 +207,12 @@ Use this option if you want to understand the Bicep templates and deploy infrast
     ```powershell
     # List all resources in the resource group
     az resource list -g $RG --query "[].{Name:name, Type:type}" -o table
-
+    ```
+    ```powershell
     # List Container Apps
     az containerapp list -g $RG --query "[].{Name:name, URL:properties.configuration.ingress.fqdn}" -o table
-
+    ```
+    ```powershell
     # List Container Apps Jobs
     az containerapp job list -g $RG --query "[].{Name:name, TriggerType:properties.configuration.triggerType}" -o table
 
@@ -219,13 +239,16 @@ In this section, you'll build custom container images and push them to Azure Con
     ```powershell
     # Navigate to the ingestion-service directory
     cd src/ingestion-service
-
+    ```
+    ```powershell
     # Build the container image
     docker build -t "$ACR/ingestion-service:v1" .
-
+    ```
+    ```powershell
     # Push to Azure Container Registry
     docker push "$ACR/ingestion-service:v1"
-
+    ```
+    ```powershell
     # Return to project root
     cd ../..
 
@@ -236,13 +259,16 @@ In this section, you'll build custom container images and push them to Azure Con
     ```powershell
     # Navigate to the dashboard directory
     cd src/dashboard
-
+    ```
+    ```powershell
     # Build the container image
     docker build -t "$ACR/dashboard:v1" .
-
+    ```
+    ```powershell
     # Push to Azure Container Registry
     docker push "$ACR/dashboard:v1"
-
+    ```
+    ```powershell
     # Return to project root
     cd ../..
 
@@ -253,13 +279,16 @@ In this section, you'll build custom container images and push them to Azure Con
     ```powershell
     # Navigate to the hello-api directory
     cd src/hello-api
-
+    ```
+    ```powershell
     # Build v1 of the Hello API (blue version)
     docker build -t "$ACR/hello-api:v1" --build-arg APP_VERSION=v1 .
-
+    ```
+    ```powershell
     # Push to Azure Container Registry
     docker push "$ACR/hello-api:v1"
-
+    ```
+    ```powershell
     # Return to project root
     cd ../..
 
@@ -270,13 +299,16 @@ In this section, you'll build custom container images and push them to Azure Con
     ```powershell
     # Navigate to the demo-job directory
     cd src/demo-job
-
+    ```
+    ```powershell
     # Build the job image
     docker build -t "$ACR/demo-job:v1" .
-
+    ```
+    ```powershell
     # Push to Azure Container Registry
     docker push "$ACR/demo-job:v1"
-
+    ```
+    ```powershell
     # Return to project root
     cd ../..
 
@@ -287,7 +319,8 @@ In this section, you'll build custom container images and push them to Azure Con
     ```powershell
     # List all repositories in ACR
     az acr repository list --name $ACR_NAME -o table
-
+    ```
+    ```powershell
     # List tags for each repository
     az acr repository show-tags --name $ACR_NAME --repository ingestion-service -o table
     az acr repository show-tags --name $ACR_NAME --repository dashboard -o table
@@ -323,7 +356,8 @@ Now update the deployed Container Apps to use your custom images.
         --name dashboard `
         --resource-group $RG `
         --image "$ACR/dashboard:v1"
-
+    ```
+    ```powershell
     # Verify the update
     az containerapp show -n dashboard -g $RG `
         --query "{Name:name, Image:properties.template.containers[0].image, Status:properties.runningStatus}" -o table
@@ -338,7 +372,8 @@ Now update the deployed Container Apps to use your custom images.
         --name hello-api `
         --resource-group $RG `
         --image "$ACR/hello-api:v1"
-
+    ```
+    ```powershell
     # Verify the update
     az containerapp show -n hello-api -g $RG `
         --query "{Name:name, Image:properties.template.containers[0].image, Status:properties.runningStatus}" -o table
@@ -352,7 +387,8 @@ Now update the deployed Container Apps to use your custom images.
     az containerapp job update -n data-processor-scheduled -g $RG --image "$ACR/demo-job:v1"
     az containerapp job update -n data-processor-manual -g $RG --image "$ACR/demo-job:v1"
     az containerapp job update -n data-processor-parallel -g $RG --image "$ACR/demo-job:v1"
-
+    ```
+    ```powershell
     # Verify the updates
     az containerapp job list -g $RG `
         --query "[].{Name:name, Image:properties.template.containers[0].image}" -o table
@@ -365,7 +401,8 @@ Now update the deployed Container Apps to use your custom images.
     # Check all Container Apps are running
     az containerapp list -g $RG `
         --query "[].{Name:name, Status:properties.runningStatus, Replicas:properties.template.scale.minReplicas}" -o table
-
+    ```
+    ```powershell
     # Test the endpoints
     Write-Host "`nTesting Dashboard..."
     Invoke-RestMethod -Uri "$DASHBOARD_URL/health" -TimeoutSec 30
@@ -401,14 +438,14 @@ Use this option for a streamlined one-command deployment that handles **everythi
     ```powershell
     # Check if azd is installed
     azd version
-
+    ```
+    ```powershell
     # If not installed, install it (Windows winget)
     winget install microsoft.azd
-
-    # Or using PowerShell
-    # powershell -ex AllSigned -c "Invoke-RestMethod 'https://aka.ms/install-azd.ps1' | Invoke-Expression"
-
     ```
+
+    > **Note**: If you are not on Windows or prefer PowerShell, use this command: 
+    # powershell -ex AllSigned -c "Invoke-RestMethod 'https://aka.ms/install-azd.ps1' | Invoke-Expression"
 
 #### Initialize and Deploy with azd
 
@@ -425,10 +462,12 @@ Use this option for a streamlined one-command deployment that handles **everythi
     ```powershell
     # Start from the cloned repo folder
     cd c:\azd-contapp-demo-v2
-
+    ```
+    ```powershell
     # Create a new environment (use the same name as ENV_NAME)
     azd env new $ENV_NAME
-
+    ```
+    ```powershell
     # Set the Azure location
     azd env set AZURE_LOCATION $LOCATION
 
@@ -466,16 +505,19 @@ Use this option for a streamlined one-command deployment that handles **everythi
             Set-Variable -Name $matches[1] -Value ($matches[2] -replace '^"|"$', '')
         }
     }
-
+    ```
+    ```powershell
     # The variables are now available directly (matching Bicep output names)
     $RG = $AZURE_RESOURCE_GROUP
     $ACR = $CONTAINER_REGISTRY_LOGIN_SERVER
     $ACR_NAME = $CONTAINER_REGISTRY_NAME
     $CAE_NAME = $CONTAINER_APPS_ENVIRONMENT_NAME
-    
+    ```
+    ```powershell
     # Set aliases to match Option A variable names (for consistency in later tasks)
     $INGESTION_URL = $INGESTION_SERVICE_URL
-
+    ```
+    ```powershell
     # Display captured values
     Write-Host "========================================="
     Write-Host "Resource Group:        $RG"
@@ -495,10 +537,12 @@ Use this option for a streamlined one-command deployment that handles **everythi
     ```powershell
     # List all Container Apps (should show your custom images, not placeholders)
     az containerapp list -g $RG --query "[].{Name:name, Image:properties.template.containers[0].image}" -o table
-
+    ```
+    ```powershell
     # List Container Apps Jobs
     az containerapp job list -g $RG --query "[].{Name:name, TriggerType:properties.configuration.triggerType}" -o table
-
+    ```
+    ```powershell
     # Test the endpoints
     Write-Host "`nTesting Dashboard..."
     Invoke-RestMethod -Uri "$DASHBOARD_URL/health" -TimeoutSec 30
@@ -527,10 +571,9 @@ In this task, you will observe how Azure Container Apps automatically scales the
     ```powershell
     # Check the current number of replicas
     az containerapp replica list -n ingestion-service -g $RG -o table
-
-    # Note: Should show 1 replica (minReplicas is set to 1)
-
     ```
+
+    > **Note**: The output of this command should show 1 replica (minReplicas is set to 1)
 
 ### Review Scaling Configuration
 
@@ -552,7 +595,8 @@ In this task, you will observe how Azure Container Apps automatically scales the
     ```powershell
     # Display the dashboard URL
     Write-Host "Open this URL in your browser: $DASHBOARD_URL"
-
+    ```
+    ```powershell
     # Or open directly (Windows)
     Start-Process $DASHBOARD_URL
 
@@ -567,7 +611,8 @@ In this task, you will observe how Azure Container Apps automatically scales the
     ```powershell
     # Run this command multiple times during the load test to see scaling
     az containerapp replica list -n ingestion-service -g $RG -o table
-
+    ```
+    ```powershell
     # Or watch continuously (run in a separate terminal)
     while ($true) {
         $count = (az containerapp replica list -n ingestion-service -g $RG -o json | ConvertFrom-Json).Count
@@ -608,7 +653,8 @@ In this task, you will deploy a second version of the Hello API and implement tr
     ```powershell
     # Open Hello API in browser
     Start-Process $HELLO_API_URL
-
+    ```
+    ```powershell
     # Or test via CLI
     Invoke-RestMethod -Uri "$HELLO_API_URL/api/version"
 
@@ -626,7 +672,8 @@ In this task, you will deploy a second version of the Hello API and implement tr
         --name hello-api `
         --resource-group $RG `
         --mode Multiple
-
+    ```
+    ```powershell
     # Verify the mode change
     az containerapp show -n hello-api -g $RG `
         --query "properties.configuration.activeRevisionsMode" -o tsv
@@ -640,13 +687,16 @@ In this task, you will deploy a second version of the Hello API and implement tr
     ```powershell
     # Navigate to the hello-api directory
     cd src/hello-api
-
+    ```
+    ```powershell
     # Build v2 (green version)
     docker build -t "$ACR/hello-api:v2" --build-arg APP_VERSION=v2 .
-
+    ```
+    ```powershell
     # Push to ACR
     docker push "$ACR/hello-api:v2"
-
+    ```
+    ```powershell
     # Return to project root
     cd ../..
 
@@ -703,7 +753,8 @@ From the Azure Portal, configure traffic splitting between versions:
         --name hello-api `
         --resource-group $RG `
         --revision-weight "hello-api--v2=100"
-
+    ```
+    ```powershell
     # Verify
     az containerapp ingress traffic show -n hello-api -g $RG -o table
 
@@ -782,13 +833,16 @@ In this task, you will work with Container Apps Jobs for batch processing tasks.
         --name data-processor-manual `
         --resource-group $RG `
         --query "name" -o tsv
-
+    ```
+    ```powershell
     Write-Host "Started job execution: $JOB_EXECUTION"
-
+    ```
+    ```powershell
     # Wait for completion
     Write-Host "Waiting for job to complete..."
     Start-Sleep -Seconds 20
-
+    ```
+    ```powershell
     # Check execution status
     az containerapp job execution list `
         --name data-processor-manual `
@@ -806,12 +860,15 @@ In this task, you will work with Container Apps Jobs for batch processing tasks.
     az containerapp job start `
         --name data-processor-parallel `
         --resource-group $RG
-
+    ```
+    ```powershell
     Write-Host "Started parallel job with 3 replicas"
-
+    ```
+    ```powershell
     # Wait and check status
     Start-Sleep -Seconds 25
-
+    ```
+    ```powershell
     # View execution details
     az containerapp job execution list `
         --name data-processor-parallel `
@@ -890,13 +947,16 @@ In this task, you will set up an Azure DevOps pipeline to automate the build and
     ```powershell
     # Navigate to your project directory
     cd c:\azd-contapp-demo-v2
-
+    ```
+    ```powershell
     # Initialize Git repository 
     git init
-
+    ```
+    ```powershell
     # Add all files
     git add .
-
+    ```
+    ```powershell
     # Create initial commit
     git commit -m "Initial commit: Contoso Analytics Container Apps"
 
@@ -914,7 +974,8 @@ In this task, you will set up an Azure DevOps pipeline to automate the build and
     ```powershell
     # Add Azure DevOps as remote (replace with your URL)
     git remote add origin https://dev.azure.com/YOUR_ORG/Contoso-ContainerApps/_git/Contoso-ContainerApps
-
+    ```
+    ```powershell
     # Push to Azure DevOps
     git push -u origin main
 
@@ -1042,7 +1103,8 @@ In this task, you will set up an Azure DevOps pipeline to automate the build and
     # Check all Container Apps are running with the new images
     az containerapp list -g $RG `
         --query "[].{Name:name, Image:properties.template.containers[0].image}" -o table
-
+    ```
+    ```powershell
     # Check the Jobs
     az containerapp job list -g $RG `
         --query "[].{Name:name, Image:properties.template.containers[0].image}" -o table
@@ -1176,12 +1238,13 @@ In this optional task, you will extend the pipeline to implement blue-green depl
     # Promote v2 to 100% traffic
     $V2_REVISION = az containerapp revision list -n hello-api -g $RG `
         --query "[?contains(name, 'v2-')].name | [0]" -o tsv
-
+    ```
+    ```powershell
     az containerapp ingress traffic set `
         --name hello-api `
         --resource-group $RG `
         --revision-weight "${V2_REVISION}=100"
-
+    
     Write-Host "V2 promoted to 100% traffic"
 
     ```
@@ -1217,7 +1280,8 @@ In this optional task, you will extend the pipeline to implement blue-green depl
     $content = Get-Content ".\src\hello-api\Program.cs"
     $content = $content -replace 'Contoso Analytics API', 'Contoso Analytics API v2'
     $content | Set-Content ".\src\hello-api\Program.cs"
-
+    ```
+    ```powershell
     # Commit and push
     git add .
     git commit -m "Update API title - trigger CI/CD"
