@@ -46,8 +46,8 @@ Before you can start the exercises, you will need to:
     ```
 
     ```powershell
-    # Check Docker is running
-    docker --version
+    # Check Docker is running; if it fails, start Docker Desktop and wait for the GUI to inform you it is ready to run containers
+    docker info
     ```
 
     ```powershell
@@ -444,8 +444,10 @@ Use this option for a streamlined one-command deployment that handles **everythi
     winget install microsoft.azd
     ```
 
-    > **Note**: If you are not on Windows or prefer PowerShell, use this command: 
-    # powershell -ex AllSigned -c "Invoke-RestMethod 'https://aka.ms/install-azd.ps1' | Invoke-Expression"
+    > **Note**: If you are not on Windows or prefer PowerShell instead of Winget, use this command: 
+    ```powershell
+    powershell -ex AllSigned -c "Invoke-RestMethod 'https://aka.ms/install-azd.ps1' | Invoke-Expression"
+    ```
 
 #### Initialize and Deploy with azd
 
@@ -935,7 +937,6 @@ In this task, you will set up an Azure DevOps pipeline to automate the build and
         - **Subscription**: Select your Azure subscription
         - **Resource group**: Leave empty (subscription-level access)
         - **Service connection name**: `AzureServiceConnection`
-    - Check **Grant access permission to all pipelines**
     - Click **Save**
 
     > **Note**: The service connection name must match the `azureSubscription` variable in the pipeline YAML file.
@@ -969,11 +970,11 @@ In this task, you will set up an Azure DevOps pipeline to automate the build and
     - Click **Files**
     - Copy the **Clone URL** (HTTPS)
 
-1. Add the remote and push:
+1. **Update** the remote and push:
 
     ```powershell
     # Add Azure DevOps as remote (replace with your URL)
-    git remote add origin https://dev.azure.com/YOUR_ORG/Contoso-ContainerApps/_git/Contoso-ContainerApps
+    git remote set-url origin https://dev.azure.com/YOUR_ORG/Contoso-ContainerApps/_git/Contoso-ContainerApps
     ```
     ```powershell
     # Push to Azure DevOps
@@ -989,26 +990,42 @@ In this task, you will set up an Azure DevOps pipeline to automate the build and
 
 **Ubuntu ADO Agent**:
 
-    ```powershell
-    # Open the pipeline file
-    code azure-pipelines.yml
-
-    ```
+```powershell
+# Open the pipeline file
+code .ado/azure-pipelines.yml
+```
 
 **Windows ADO Agent**:
 
-    ```powershell
-    # Open the pipeline file
-    code azure-pipelines-windows.yml
+```powershell
+# Open the pipeline file
+code .ado/azure-pipelines-windows.yml
+```
 
-    ```
-
-1. **Modify** the following variables with their correct values:
+2. **Modify** the following variables with their correct values:
     - **azureSubscription**: the name of the ADO Service Connection set up earlier (default=AzureServiceConnection)
     - **resourceGroupName**: Name of the Resource Group with your Azure Resources already used for this project
     - **ACR Login Server**: The FQDN of the Azure Container Registry already used in this project
     - **ACR Name**: The short name of the Azure Container Registry already used in this project
     - **Azure Region**: The Azure region location name already used for this project
+
+3. Depending on the **setup of your [Azure DevOps Agent Pool](https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/agents?view=azure-devops&tabs=yaml)**, you might also need to change the pipeline pool settings syntax:
+
+    - **When using self-hosted agent**
+
+    ```yaml
+    pool:
+        name: $(agentPool)
+
+    ```
+
+    - **When using Azure Hosted agent**
+
+    ```yaml
+    pool:
+        vmImage: 'ubuntu-latest' #or 'windows-latest if you are on the azure-pipelines-windows.yml'
+
+    ```
 
 1. Save the file and commit the change:
 
@@ -1032,22 +1049,12 @@ In this task, you will set up an Azure DevOps pipeline to automate the build and
         - **Path**: 
             - `./ado/azure-pipelines.yml` (for Ubuntu ADO Agent)
             - `./ado/azure-pipelines-windows.yml` (for Windows ADO Agent)
-1. Depending on the **setup of your [Azure DevOps Agent Pool](https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/agents?view=azure-devops&tabs=yaml)**, you might also need to change the pipeline pool settings syntax:
-    - **When using self-hosted agent**
-        ```yaml
-        pool:
-          name: $(agentPool)
-
-        ```
-
-    - **When using Azure Hosted agent**
-        ```yaml
-        pool:
-          vmImage: 'ubuntu-latest' #or 'windows-latest'
-
-        ```
 
 1. Click **Run** to save the changes and kick-off the pipeline execution
+
+### Pipeline Approvals
+
+1. Before the pipeline starts, you might get prompted for **an approval**. This is managed through **environments**, simulating how a DevOps team can keep control of the actual deployment to production. **Confirm** the approval request.
 
 ### Review the Pipeline Structure
 
@@ -1064,18 +1071,6 @@ In this task, you will set up an Azure DevOps pipeline to automate the build and
     - **Artifact publishing**: Docker images are saved as pipeline artifacts
     - **Dynamic outputs**: Resource names are retrieved from your existing deployment
     - **Environment gates**: Deployment requires approval (optional)
-
-### Pipeline Approvals
-
-1. Before the 3rd stage **Deploy to Container Apps** starts, you will get prompted for **an approval**. This is managed through **environments**, simulating how a DevOps team can keep control of the actual deployment to production. **Confirm** the approval request.
-1. Once you confirm the approval, you can validate (and finetune) the **environment** like this:
-    - Go to **Pipelines** > **Environments**
-    - Name: `production`
-    - Click on the `production` environment
-    - Click **⋮** (more options) > **Approvals and checks**
-    - Click **+ Add check** > **Approvals**
-    - Add yourself as an approver
-    - Click **Create**
 
 ### Monitor Pipeline Progress
 
@@ -1099,11 +1094,16 @@ In this task, you will set up an Azure DevOps pipeline to automate the build and
 
 1. After the pipeline completes, verify the deployment:
 
+- **Check the Container Apps are running**
+
     ```powershell
     # Check all Container Apps are running with the new images
     az containerapp list -g $RG `
         --query "[].{Name:name, Image:properties.template.containers[0].image}" -o table
     ```
+
+- **Check the Container Apps Jobs are running**
+
     ```powershell
     # Check the Jobs
     az containerapp job list -g $RG `
@@ -1239,6 +1239,7 @@ In this optional task, you will extend the pipeline to implement blue-green depl
     $V2_REVISION = az containerapp revision list -n hello-api -g $RG `
         --query "[?contains(name, 'v2-')].name | [0]" -o tsv
     ```
+    
     ```powershell
     az containerapp ingress traffic set `
         --name hello-api `
