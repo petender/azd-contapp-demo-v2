@@ -48,16 +48,16 @@ This scenario deploys an Azure Container Apps environment with 3 containerized a
 * **User-Assigned Managed Identity** - Secure authentication to ACR and Service Bus
 * **Log Analytics Workspace** - Centralized logging and monitoring
 
-<img src="screenshots/01-ResourceGroup_Overview.png" alt="Resource Group Overview showing all 12 deployed resources" style="width:70%;">
+<img src="https://raw.githubusercontent.com/petender/azd-contapp-demo-v2/refs/heads/main/demoguide/screenshots/01-ResourceGroup_Overview.png" alt="Resource Group Overview showing all 12 deployed resources" style="width:70%;">
 <br></br>
 
-<img src="screenshots/02-Container_Registry_Overview.png" alt="Azure Container Registry overview with login server and Basic pricing tier" style="width:70%;">
+<img src="https://raw.githubusercontent.com/petender/azd-contapp-demo-v2/refs/heads/main/demoguide/screenshots/02-Container_Registry_Overview.png" alt="Azure Container Registry overview with login server and Basic pricing tier" style="width:70%;">
 <br></br>
 
-<img src="screenshots/03-Container_Registry_Repositories.png" alt="Container Registry repositories showing 4 container images" style="width:70%;">
+<img src="https://raw.githubusercontent.com/petender/azd-contapp-demo-v2/refs/heads/main/demoguide/screenshots/03-Container_Registry_Repositories.png" alt="Container Registry repositories showing 4 container images" style="width:70%;">
 <br></br>
 
-<img src="screenshots/04-Container_Apps_Environment.png" alt="Container Apps Environment overview with all 3 apps and 3 jobs listed" style="width:70%;">
+<img src="https://raw.githubusercontent.com/petender/azd-contapp-demo-v2/refs/heads/main/demoguide/screenshots/04-Container_Apps_Environment.png" alt="Container Apps Environment overview with all 3 apps and 3 jobs listed" style="width:70%;">
 <br></br>
 
 ### 2. What can I demo from this scenario after deployment
@@ -72,32 +72,32 @@ After the deployment completes, you can run **3 independent demos** showcasing c
 
 1. Navigate to **ingestion-service** in the Azure Portal. Show the Container App overview, confirming it is in **Running** status.
 
-<img src="screenshots/05-Ingestion_Service_Overview.png" alt="Step 1 - ingestion-service Container App overview" style="width:70%;">
+<img src="https://raw.githubusercontent.com/petender/azd-contapp-demo-v2/refs/heads/main/demoguide/screenshots/05-Ingestion_Service_Overview.png" alt="Step 1 - ingestion-service Container App overview" style="width:70%;">
 <br></br>
 
 2. Click **Revisions and replicas** to show the current state: **1 active revision** with **1 replica** running and 100% traffic.
 
-<img src="screenshots/06-Ingestion_Revisions_Initial.png" alt="Step 2 - Initial state showing 1 revision, 1 replica" style="width:70%;">
+<img src="https://raw.githubusercontent.com/petender/azd-contapp-demo-v2/refs/heads/main/demoguide/screenshots/06-Ingestion_Revisions_Initial.png" alt="Step 2 - Initial state showing 1 revision, 1 replica" style="width:70%;">
 <br></br>
 
 3. Click **Scale** to show the scaling configuration: Min replicas = 1, Max replicas = 100, with an **HTTP scaler** rule (Cooldown: 300s, Polling interval: 30s).
 
-<img src="screenshots/07-Ingestion_Scale_Rules.png" alt="Step 3 - Scale settings with HTTP scaler, max 100 replicas" style="width:70%;">
+<img src="https://raw.githubusercontent.com/petender/azd-contapp-demo-v2/refs/heads/main/demoguide/screenshots/07-Ingestion_Scale_Rules.png" alt="Step 3 - Scale settings with HTTP scaler, max 100 replicas" style="width:70%;">
 <br></br>
 
 4. Open the **Dashboard** application URL in a new browser tab. Point out the **Contoso Analytics** interface with the "Send 100 Events" button and the live architecture diagram.
 
-<img src="screenshots/08-Dashboard_App.png" alt="Step 4 - Dashboard application with Send 100 Events button" style="width:70%;">
+<img src="https://raw.githubusercontent.com/petender/azd-contapp-demo-v2/refs/heads/main/demoguide/screenshots/08-Dashboard_App.png" alt="Step 4 - Dashboard application with Send 100 Events button" style="width:70%;">
 <br></br>
 
 5. Click **"Send 100 Events"** and wait for the confirmation message: *"✅ Complete! 100 events sent."*
 
-<img src="screenshots/09-Dashboard_Load_Sent.png" alt="Step 5 - Dashboard showing 100 events sent successfully" style="width:70%;">
+<img src="https://raw.githubusercontent.com/petender/azd-contapp-demo-v2/refs/heads/main/demoguide/screenshots/09-Dashboard_Load_Sent.png" alt="Step 5 - Dashboard showing 100 events sent successfully" style="width:70%;">
 <br></br>
 
 6. Navigate back to **ingestion-service → Revisions and replicas** in the Azure Portal. Observe the replica count has automatically scaled up (in this demo, it scaled to **15 replicas**) in response to the HTTP load.
 
-<img src="screenshots/10-Ingestion_Scaled_15_Replicas.png" alt="Step 6 - Revisions page showing auto-scaled to 15 replicas" style="width:70%;">
+<img src="https://raw.githubusercontent.com/petender/azd-contapp-demo-v2/refs/heads/main/demoguide/screenshots/10-Ingestion_Scaled_15_Replicas.png" alt="Step 6 - Revisions page showing auto-scaled to 15 replicas" style="width:70%;">
 <br></br>
 
 7. **Talking Point:** *"That's it — no KEDA installation, no HPA manifests, no Kubernetes config. Container Apps handles all the scaling infrastructure for you. After the 5-minute cooldown period, replicas will automatically scale back down to 1."*
@@ -110,12 +110,12 @@ After the deployment completes, you can run **3 independent demos** showcasing c
 
 1. Open the **hello-api** URL in a browser. Show the current version displaying a blue **"v1"** badge with the .NET 8 runtime info and hostname.
 
-<img src="screenshots/11-HelloAPI_v1.png" alt="Step 1 - Hello API showing v1 blue badge" style="width:70%;">
+<img src="https://raw.githubusercontent.com/petender/azd-contapp-demo-v2/refs/heads/main/demoguide/screenshots/11-HelloAPI_v1.png" alt="Step 1 - Hello API showing v1 blue badge" style="width:70%;">
 <br></br>
 
 2. In the Azure Portal, navigate to **hello-api → Revisions and replicas**. Show the single active revision running 100% of traffic.
 
-<img src="screenshots/12-HelloAPI_Revisions.png" alt="Step 2 - hello-api revisions showing single revision at 100% traffic" style="width:70%;">
+<img src="https://raw.githubusercontent.com/petender/azd-contapp-demo-v2/refs/heads/main/demoguide/screenshots/12-HelloAPI_Revisions.png" alt="Step 2 - hello-api revisions showing single revision at 100% traffic" style="width:70%;">
 <br></br>
 
 3. To demonstrate traffic splitting, run the following CLI commands:
@@ -163,12 +163,12 @@ az containerapp ingress traffic set -n hello-api -g $rg `
 
 1. Navigate to **data-processor-scheduled** in the Azure Portal. Show the job overview: Trigger Type = **Schedule**, Cron expression = `*/2 * * * *` (every 2 minutes), Parallelism = 1, Completion count = 1.
 
-<img src="screenshots/13-Job_Scheduled_Overview.png" alt="Step 1 - Scheduled job overview with cron expression" style="width:70%;">
+<img src="https://raw.githubusercontent.com/petender/azd-contapp-demo-v2/refs/heads/main/demoguide/screenshots/13-Job_Scheduled_Overview.png" alt="Step 1 - Scheduled job overview with cron expression" style="width:70%;">
 <br></br>
 
 2. Click **Execution history** to show the automatic executions. Note the regular 2-minute intervals with **Succeeded** status and execution durations of ~27–50 seconds.
 
-<img src="screenshots/14-Job_Scheduled_Execution_History.png" alt="Step 2 - Scheduled job execution history showing many succeeded runs" style="width:70%;">
+<img src="https://raw.githubusercontent.com/petender/azd-contapp-demo-v2/refs/heads/main/demoguide/screenshots/14-Job_Scheduled_Execution_History.png" alt="Step 2 - Scheduled job execution history showing many succeeded runs" style="width:70%;">
 <br></br>
 
 3. **Talking Point:** *"Scheduled jobs run automatically based on the cron expression. No CronJob YAML, no kubectl — just define the schedule in your Bicep template."*
@@ -179,7 +179,7 @@ az containerapp ingress traffic set -n hello-api -g $rg `
 az containerapp job start -n data-processor-manual -g $rg
 ```
 
-<img src="screenshots/15-Job_Manual_Overview.png" alt="Step 4 - Manual job overview" style="width:70%;">
+<img src="https://raw.githubusercontent.com/petender/azd-contapp-demo-v2/refs/heads/main/demoguide/screenshots/15-Job_Manual_Overview.png" alt="Step 4 - Manual job overview" style="width:70%;">
 <br></br>
 
 5. **Talking Point:** *"Manual jobs are perfect for on-demand tasks — data migrations, report generation, cleanup tasks."*
@@ -190,7 +190,7 @@ az containerapp job start -n data-processor-manual -g $rg
 az containerapp job start -n data-processor-parallel -g $rg
 ```
 
-<img src="screenshots/16-Job_Parallel_Overview.png" alt="Step 6 - Parallel job overview with parallelism of 3" style="width:70%;">
+<img src="https://raw.githubusercontent.com/petender/azd-contapp-demo-v2/refs/heads/main/demoguide/screenshots/16-Job_Parallel_Overview.png" alt="Step 6 - Parallel job overview with parallelism of 3" style="width:70%;">
 <br></br>
 
 7. **Talking Point:** *"Parallel jobs split work across multiple instances. Great for processing large datasets quickly — each worker handles a portion."*

@@ -16,6 +16,9 @@ __pycache__/
 venv/
 ENV/
 
+# Playwright
+.playwright-mcp
+
 # .NET
 bin/
 obj/
