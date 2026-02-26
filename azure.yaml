@@ -1,8 +1,8 @@
 # Azure Developer CLI (azd) configuration
-# Contoso Analytics: Event-Driven Microservices with Azure Container Apps
-name: contoso-analytics
+# TDD Container App Demo V2: Event-Driven Microservices with Azure Container Apps
+name: tdd-contapp-demo-v2
 metadata:
-  template: contoso-analytics@0.1.0
+  template: tdd-contapp-demo-v2@0.1.0
 
 # Azure resources to provision
 infra:
